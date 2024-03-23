@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using LogicalSolver.Define;
+using System.Text;
 
 namespace CourseProject
 {
@@ -28,7 +29,8 @@ namespace CourseProject
                 switch (commandName.ToUpperInvariant())
                 {
                     case "DEFINE":
-                        Console.WriteLine("bla bla define");
+                        (string funcName, List<string> parametersList, string funcBody) = Define.Parse(command.Substring(commandName.Length + 1));
+
                         break;
                     case "SOLVE":
                         Console.WriteLine("bla bla solve");
