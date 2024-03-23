@@ -30,7 +30,7 @@ namespace CourseProject
                 {
                     case "DEFINE":
                         (string funcName, List<string> parametersList, string funcBody) = Define.Parse(command.Substring(commandName.Length + 1));
-
+                        Define.BuildTree(funcBody);
                         break;
                     case "SOLVE":
                         Console.WriteLine("bla bla solve");

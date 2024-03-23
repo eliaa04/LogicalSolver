@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace LogicalSolver.Define
 {
-    internal class Define
+    public class Define
     {
         public static (string, List<string>, string) Parse(string command)
         {
@@ -56,5 +56,59 @@ namespace LogicalSolver.Define
             }
             return (funcName, parametersList, funcBody);
         }
+        public static void BuildTree(string funcBody)
+        {
+            List<string> funcBodyElements = ParseFunctionBody(funcBody);
+        }
+
+        private static List<string> ParseFunctionBody(string funcBody)
+        {
+            List<string> funcBodyElements = new();
+            bool isFunctionParametersList = false;
+            string currentElement = string.Empty;
+
+            foreach (var ch in funcBody) 
+            {
+                if (ch == '(')
+                {
+                    isFunctionParametersList = true;
+                    currentElement += ch;
+                    continue;
+                }
+
+                if (ch == ')') 
+                {
+                    isFunctionParametersList = false;
+                    currentElement += ch;
+                    continue;
+                }
+
+                if (Char.IsWhiteSpace(ch))
+                {
+                    if (isFunctionParametersList)
+                    {
+                        currentElement += ch;
+                    }
+                    else
+                    {
+                        funcBodyElements.Add(currentElement);
+                        currentElement = string.Empty;
+                    }
+
+                    continue;
+                }
+
+                currentElement += ch;
+            }
+
+            if (!string.IsNullOrEmpty(currentElement))
+            {
+                funcBodyElements.Add(currentElement);
+            }
+
+            return funcBodyElements;
+        }
+
     }
 }
+
