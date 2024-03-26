@@ -1,4 +1,5 @@
-﻿using LogicalSolver.Define;
+﻿using LogicalSolver;
+using LogicalSolver.Define;
 using System.Text;
 
 namespace CourseProject
@@ -30,7 +31,10 @@ namespace CourseProject
                 {
                     case "DEFINE":
                         (string funcName, List<string> parametersList, string funcBody) = Define.Parse(command.Substring(commandName.Length + 1));
-                        Define.BuildTree(funcBody);
+                        Tree tree = new Tree();
+                        TreeNode root = tree.BuildTree(funcBody);
+                        Dictionary<string, TreeNode> rootByFuncNames = new Dictionary<string, TreeNode>();
+                        rootByFuncNames.Add(funcName, root);
                         break;
                     case "SOLVE":
                         Console.WriteLine("bla bla solve");

@@ -9,8 +9,9 @@ namespace LogicalSolver
     public class TreeNode
     {
         public string Operator { get; set; }
-        public string Operand { get; set; }
+        public string ParameterName { get; set; }
         public TreeNode Left { get; set; }
         public TreeNode Right { get; set; }
     }
+
 }
