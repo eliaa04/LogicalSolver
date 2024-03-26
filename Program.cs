@@ -1,4 +1,5 @@
 ﻿using LogicalSolver;
+using LogicalSolver.Common;
 using LogicalSolver.Define;
 using System.Text;
 
@@ -27,17 +28,24 @@ namespace CourseProject
                     commandName += symbol;
                 }
 
+                var commandRemainder = command.Substring((commandName.Length + 1));
+
+
                 switch (commandName.ToUpperInvariant())
                 {
                     case "DEFINE":
-                        (string funcName, List<string> parametersList, string funcBody) = Define.Parse(command.Substring(commandName.Length + 1));
+                        (string defineFuncName, int defineCurrentIndex) = Common.ParseFuncName(commandRemainder);
+                        (List<string> parametersList, defineCurrentIndex) = Common.ParseParameters(commandRemainder, defineCurrentIndex);
+                        string funcBody = Define.Parse(commandRemainder, defineCurrentIndex);
                         Tree tree = new Tree();
                         TreeNode root = tree.BuildTree(funcBody);
                         Dictionary<string, TreeNode> rootByFuncNames = new Dictionary<string, TreeNode>();
-                        rootByFuncNames.Add(funcName, root);
+                        rootByFuncNames.Add(defineFuncName, root);
                         break;
                     case "SOLVE":
-                        Console.WriteLine("bla bla solve");
+                        (string solveFuncName, int solveCurrentIndex) = Common.ParseFuncName(commandRemainder);
+                        (List<string> argumentsList, solveCurrentIndex) = Common.ParseParameters(commandRemainder, solveCurrentIndex);
+                        
                         break;
                     case "ALL":
                         Console.WriteLine("bla bla all");
