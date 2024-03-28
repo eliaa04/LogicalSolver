@@ -10,6 +10,9 @@ namespace CourseProject
         static void Main()
         {
             Console.OutputEncoding = Encoding.UTF8;
+            Dictionary<string, TreeNode> rootByFuncNames = new();
+            Dictionary<string, List<string>> parametersByFuncNames = new();
+
 
             while (true)
             {
@@ -29,23 +32,32 @@ namespace CourseProject
                 }
 
                 var commandRemainder = command.Substring((commandName.Length + 1));
-
+                string funcName = string.Empty;
+                int currentIndex = 0;
 
                 switch (commandName.ToUpperInvariant())
                 {
                     case "DEFINE":
-                        (string defineFuncName, int defineCurrentIndex) = Common.ParseFuncName(commandRemainder);
-                        (List<string> parametersList, defineCurrentIndex) = Common.ParseParameters(commandRemainder, defineCurrentIndex);
-                        string funcBody = Define.Parse(commandRemainder, defineCurrentIndex);
+                        (funcName, currentIndex) = Common.ParseFuncName(commandRemainder);
+                        (List<string> parametersList, currentIndex) = Common.ParseParameters(commandRemainder, currentIndex);
+                        string funcBody = Define.Parse(commandRemainder, currentIndex);
                         Tree tree = new Tree();
                         TreeNode root = tree.BuildTree(funcBody);
-                        Dictionary<string, TreeNode> rootByFuncNames = new Dictionary<string, TreeNode>();
-                        rootByFuncNames.Add(defineFuncName, root);
+                        rootByFuncNames.Add(funcName, root);
+                        parametersByFuncNames.Add(funcName, parametersList);
                         break;
                     case "SOLVE":
-                        (string solveFuncName, int solveCurrentIndex) = Common.ParseFuncName(commandRemainder);
-                        (List<string> argumentsList, solveCurrentIndex) = Common.ParseParameters(commandRemainder, solveCurrentIndex);
-                        
+                        (funcName, currentIndex) = Common.ParseFuncName(commandRemainder);
+                        (List<string> argumentsList, currentIndex) = Common.ParseParameters(commandRemainder, currentIndex);
+
+                        if (rootByFuncNames.ContainsKey(funcName))
+                        {
+                            var rootForSolving = rootByFuncNames[funcName];
+                        }
+                        if (parametersByFuncNames.ContainsKey(funcName))
+                        {
+                            var parametersForSolving = parametersByFuncNames[funcName];
+                        }
                         break;
                     case "ALL":
                         Console.WriteLine("bla bla all");
