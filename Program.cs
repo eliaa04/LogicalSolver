@@ -1,6 +1,7 @@
 ﻿using LogicalSolver;
 using LogicalSolver.Common;
 using LogicalSolver.Define;
+using LogicalSolver.Solve;
 using System.Text;
 
 namespace CourseProject
@@ -50,14 +51,21 @@ namespace CourseProject
                         (funcName, currentIndex) = Common.ParseFuncName(commandRemainder);
                         (List<string> argumentsList, currentIndex) = Common.ParseParameters(commandRemainder, currentIndex);
 
+                        TreeNode rootForSolving = null;
+
                         if (rootByFuncNames.ContainsKey(funcName))
                         {
-                            var rootForSolving = rootByFuncNames[funcName];
+                             rootForSolving = rootByFuncNames[funcName];
                         }
+
+                        List<string> parametersForSolving = new();
                         if (parametersByFuncNames.ContainsKey(funcName))
                         {
-                            var parametersForSolving = parametersByFuncNames[funcName];
+                           parametersForSolving = parametersByFuncNames[funcName];
                         }
+
+                        Solve.ReplaceParametersWithValues(rootForSolving,parametersForSolving,argumentsList);
+
                         break;
                     case "ALL":
                         Console.WriteLine("bla bla all");
