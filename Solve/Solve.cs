@@ -37,7 +37,43 @@ namespace LogicalSolver.Solve
                 ReplaceParametersWithValues(root.Right, parameters, values);
             }
         }
-        private static bool ToBoolean(string number)
+
+        public static bool SolveNode(TreeNode currentNode)
+        {
+            if (!String.IsNullOrEmpty(currentNode.Operator))
+            {
+                bool leftResult = default;
+                if (currentNode.Left is not null)
+                { 
+                    leftResult = SolveNode(currentNode.Left);
+                }
+
+                bool rightResult = default;
+                if (currentNode.Right is not null)
+                {
+                    rightResult = SolveNode(currentNode.Right);
+                }
+
+                if (currentNode.Operator == "&")
+                {
+                    currentNode.Value = leftResult && rightResult;
+                }
+                else if (currentNode.Operator == "|")
+                {
+                    currentNode.Value = leftResult || rightResult;
+                }
+                else if (currentNode.Operator == "!")
+                {
+                    currentNode.Value = !leftResult;
+                }
+
+               return currentNode.Value;
+            }
+
+            return currentNode.Value;
+        }
+
+        public static bool ToBoolean(string number)
         {
             if (number == "1")
             {

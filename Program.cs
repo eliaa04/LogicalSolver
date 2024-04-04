@@ -11,8 +11,10 @@ namespace CourseProject
         static void Main()
         {
             Console.OutputEncoding = Encoding.UTF8;
-            Dictionary<string, TreeNode> rootByFuncNames = new();
+
+            Dictionary<string, TreeNode> rootByFuncNames = ReadDefinitions();
             Dictionary<string, List<string>> parametersByFuncNames = new();
+            Dictionary<string, bool> solvedFunctions = ReadSolutions();
 
 
             while (true)
@@ -46,8 +48,14 @@ namespace CourseProject
                         TreeNode root = tree.BuildTree(funcBody);
                         rootByFuncNames.Add(funcName, root);
                         parametersByFuncNames.Add(funcName, parametersList);
+                        WriteDefinitions(funcName, funcBody);
                         break;
                     case "SOLVE":
+                        if (solvedFunctions.ContainsKey(commandRemainder))
+                        {
+                            Console.WriteLine(solvedFunctions[commandRemainder]);
+                            break;
+                        }
                         (funcName, currentIndex) = Common.ParseFuncName(commandRemainder);
                         (List<string> argumentsList, currentIndex) = Common.ParseParameters(commandRemainder, currentIndex);
 
@@ -55,17 +63,21 @@ namespace CourseProject
 
                         if (rootByFuncNames.ContainsKey(funcName))
                         {
-                             rootForSolving = rootByFuncNames[funcName];
+                            rootForSolving = rootByFuncNames[funcName];
                         }
 
                         List<string> parametersForSolving = new();
                         if (parametersByFuncNames.ContainsKey(funcName))
                         {
-                           parametersForSolving = parametersByFuncNames[funcName];
+                            parametersForSolving = parametersByFuncNames[funcName];
                         }
 
-                        Solve.ReplaceParametersWithValues(rootForSolving,parametersForSolving,argumentsList);
+                        Solve.ReplaceParametersWithValues(rootForSolving, parametersForSolving, argumentsList);
+                        bool treeResult = Solve.SolveNode(rootForSolving);
+                        solvedFunctions.Add(commandRemainder, treeResult);
+                        WriteSolutions(commandRemainder, treeResult);
 
+                        Console.WriteLine(treeResult);
                         break;
                     case "ALL":
                         Console.WriteLine("bla bla all");
@@ -75,6 +87,69 @@ namespace CourseProject
                         break;
                 }
             }
+        }
+
+        private static void WriteDefinitions(string funcName, string funcBody)
+        {
+            File.AppendAllLines(@"..\..\..\Files\definitions.txt", new[] { $"{funcName}:{funcBody}" });
+        }
+
+        private static void WriteSolutions(string commandRemainder, bool treeResult)
+        {
+            File.AppendAllLines(@"..\..\..\Files\solutions.txt", new[] { $"{commandRemainder}:{treeResult}" });
+        }
+
+        private static Dictionary<string, bool> ReadSolutions()
+        {
+            Dictionary<string, bool> solvedFunctions = new();
+
+            string[] solutionsFromFile = File.ReadAllLines(@"..\..\..\Files\solutions.txt");
+
+            foreach (string line in solutionsFromFile)
+            {
+                string key = string.Empty;
+
+                for (int i = 0; i < line.Length; i++)
+                {
+                    if (line[i] is ':')
+                    {
+                        solvedFunctions.Add(key, Boolean.Parse(line.Substring(i + 1)));
+                        break;
+                    }
+
+                    key += line[i];
+                }
+            }
+
+            return solvedFunctions;
+        }
+
+        private static Dictionary<string, TreeNode> ReadDefinitions()
+        {
+            Dictionary<string, TreeNode> rootByFuncNames = new();
+
+            string[] definitionsFromFile = File.ReadAllLines(@"..\..\..\Files\definitions.txt");
+
+            foreach (string line in definitionsFromFile)
+            {
+                string key = string.Empty;
+
+                for (int i = 0; i < line.Length; i++)
+                {
+                    if (line[i] is ':')
+                    {
+                        string funcBody = line.Substring(i + 1);
+                        Tree tree = new Tree();
+                        TreeNode root = tree.BuildTree(funcBody);
+                        rootByFuncNames.Add(key, root);
+                        break;
+                    }
+
+                    key += line[i];
+                }
+            }
+
+            return rootByFuncNames;
         }
     }
 }

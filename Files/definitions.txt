@@ -1,0 +1,2 @@
+func1:a b &
+func3:a b c | & d ! &
