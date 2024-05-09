@@ -54,5 +54,7 @@ namespace LogicalSolver.Common
 
             return (parametersList, currentIndex);
         }
+
     }
+
 }

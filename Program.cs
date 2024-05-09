@@ -13,7 +13,7 @@ namespace CourseProject
             Console.OutputEncoding = Encoding.UTF8;
 
             Dictionary<string, TreeNode> rootByFuncNames = ReadDefinitions();
-            Dictionary<string, List<string>> parametersByFuncNames = new();
+            Dictionary<string, List<string>> parametersByFuncNames = ReadParameters();
             Dictionary<string, bool> solvedFunctions = ReadSolutions();
 
 
@@ -49,6 +49,7 @@ namespace CourseProject
                         rootByFuncNames.Add(funcName, root);
                         parametersByFuncNames.Add(funcName, parametersList);
                         WriteDefinitions(funcName, funcBody);
+                        WriteParameters(funcName, parametersList);
                         break;
                     case "SOLVE":
                         if (solvedFunctions.ContainsKey(commandRemainder))
@@ -72,7 +73,7 @@ namespace CourseProject
                             parametersForSolving = parametersByFuncNames[funcName];
                         }
 
-                        Solve.ReplaceParametersWithValues(rootForSolving, parametersForSolving, argumentsList);
+                        Solve.ReplaceParametersWithValues(rootForSolving, parametersForSolving, argumentsList,solvedFunctions);
                         bool treeResult = Solve.SolveNode(rootForSolving);
                         solvedFunctions.Add(commandRemainder, treeResult);
                         WriteSolutions(commandRemainder, treeResult);
@@ -99,6 +100,20 @@ namespace CourseProject
             File.AppendAllLines(@"..\..\..\Files\solutions.txt", new[] { $"{commandRemainder}:{treeResult}" });
         }
 
+        private static void WriteParameters(string funcName, List<string> parametersList)
+        {
+            string parametersString = string.Empty;
+            for (int i = 0; i < parametersList.Count; i++)
+            {
+                parametersString += parametersList[i];
+                if (i != parametersList.Count - 1)
+                {
+                    parametersString += ",";
+                }
+            }
+
+            File.AppendAllLines(@"..\..\..\Files\parameters.txt", new[] { $"{funcName}:{parametersString}" });
+        }
         private static Dictionary<string, bool> ReadSolutions()
         {
             Dictionary<string, bool> solvedFunctions = new();
@@ -150,6 +165,39 @@ namespace CourseProject
             }
 
             return rootByFuncNames;
+        }
+
+        private static Dictionary<string, List<string>> ReadParameters()
+        {
+            Dictionary<string, List<string>> parametersByFuncNames = new();
+            string[] parametersFromFile = File.ReadAllLines(@"..\..\..\Files\parameters.txt");
+
+            foreach (string line in parametersFromFile)
+            {
+                string key = string.Empty;
+
+                for (int i = 0; i < line.Length; i++)
+                {
+                    if (line[i] is ':')
+                    {
+                        List<string> currentParameters = new();
+                        for (int j = i + 1; j < line.Length; j++)
+                        {
+                            if (line[j] is not ',')
+                            {
+                                currentParameters.Add(line[j].ToString());
+                            }
+                        }
+
+                        parametersByFuncNames.Add(key, currentParameters);
+                        break;
+                    }
+
+                    key += line[i];
+                }
+            }
+
+            return parametersByFuncNames;
         }
     }
 }

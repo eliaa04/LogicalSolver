@@ -1,2 +1,0 @@
-func1(1, 0):False
-func3(1, 0, 1, 0):True
