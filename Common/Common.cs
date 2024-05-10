@@ -10,7 +10,6 @@ namespace LogicalSolver.Common
     {
         public static (string, int) ParseFuncName(string command)
         {
-
             string funcName = string.Empty;
             int currentIndex = 0;
             do
