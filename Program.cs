@@ -73,7 +73,8 @@ namespace CourseProject
                             parametersForSolving = parametersByFuncNames[funcName];
                         }
 
-                        Solve.ReplaceParametersWithValues(rootForSolving, parametersForSolving, argumentsList,solvedFunctions);
+                        Solve.ReplaceParametersWithValues(rootForSolving, parametersForSolving, argumentsList,solvedFunctions, 
+                            rootByFuncNames);
                         bool treeResult = Solve.SolveNode(rootForSolving);
                         solvedFunctions.Add(commandRemainder, treeResult);
                         WriteSolutions(commandRemainder, treeResult);
@@ -95,7 +96,7 @@ namespace CourseProject
             File.AppendAllLines(@"..\..\..\Files\definitions.txt", new[] { $"{funcName}:{funcBody}" });
         }
 
-        private static void WriteSolutions(string commandRemainder, bool treeResult)
+        public static void WriteSolutions(string commandRemainder, bool treeResult)
         {
             File.AppendAllLines(@"..\..\..\Files\solutions.txt", new[] { $"{commandRemainder}:{treeResult}" });
         }

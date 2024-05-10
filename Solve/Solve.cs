@@ -8,10 +8,14 @@ using System.Threading.Tasks;
 namespace LogicalSolver.Solve
 {
     using Common;
+    using CourseProject;
+
     public class Solve
     {
         public static void ReplaceParametersWithValues(TreeNode root, List<string> parameters, List<string> values,
-            Dictionary<string,bool> solvedFunctions)        {
+            Dictionary<string, bool> solvedFunctions, Dictionary<string, TreeNode> rootsByFuncNames)
+
+        {
             if (root is null)
             {
                 throw new ArgumentNullException(nameof(root));
@@ -23,29 +27,46 @@ namespace LogicalSolver.Solve
                 {
                     if (parameters[i] == root.ParameterName)
                     {
-                        root.Value =ToBoolean( values[i]);
+                        root.Value = ToBoolean(values[i]);
                         break;
                     }
                 }
 
                 if (!parameters.Contains(root.ParameterName))
                 {
+                    (string funcName, _) = Common.ParseFuncName(root.ParameterName);
+                    if (!rootsByFuncNames.ContainsKey(funcName))
+                    {
+                        throw new Exception($"Вмъкнатата функция {funcName} не е дефинирана");
+                    }
+
                     string funcNameWithArguments = ConvertToArgumentsKey(root.ParameterName, parameters, values);
                     if (solvedFunctions.ContainsKey(funcNameWithArguments))
                     {
                         root.Value = solvedFunctions[funcNameWithArguments];
                     }
+                    else
+                    {
+                        ReplaceParametersWithValues(rootsByFuncNames[funcName], parameters, values, solvedFunctions,
+                           rootsByFuncNames);
+
+                        bool nestedResult = Solve.SolveNode(rootsByFuncNames[funcName]);
+                        solvedFunctions.Add(funcNameWithArguments,nestedResult);
+                        Program.WriteSolutions(funcNameWithArguments, nestedResult);
+
+                        root.Value = nestedResult;
+                    }
                 }
             }
-         
+
             if (root.Left is not null)
             {
-                ReplaceParametersWithValues(root.Left, parameters, values, solvedFunctions);
+                ReplaceParametersWithValues(root.Left, parameters, values, solvedFunctions, rootsByFuncNames);
             }
 
             if (root.Right is not null)
             {
-                ReplaceParametersWithValues(root.Right, parameters, values, solvedFunctions);
+                ReplaceParametersWithValues(root.Right, parameters, values, solvedFunctions, rootsByFuncNames);
             }
         }
 
@@ -101,7 +122,6 @@ namespace LogicalSolver.Solve
 
         public static string ConvertToArgumentsKey(string nestedFunctionParametersKey, List<string> parameters, List<string> values)
         {
-            
             (string funcName, int currentIndex) = Common.ParseFuncName(nestedFunctionParametersKey);
             (List<string> nestedFunctionParameters, _) = Common.ParseParameters(nestedFunctionParametersKey, currentIndex);
 
@@ -113,8 +133,7 @@ namespace LogicalSolver.Solve
                 {
                     if (nestedFunctionParameters[k] == parameters[i])
                     {
-                        bool value = ToBoolean(values[i]);
-                        funcNameWithArguments += ($"{value}");
+                        funcNameWithArguments += ($"{values[i]}");
                         if (k != nestedFunctionParameters.Count - 1)
                         {
                             funcNameWithArguments += ",";
