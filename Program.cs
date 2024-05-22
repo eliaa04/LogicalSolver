@@ -1,4 +1,5 @@
 ﻿using LogicalSolver;
+using LogicalSolver.All;
 using LogicalSolver.Common;
 using LogicalSolver.Define;
 using LogicalSolver.Solve;
@@ -37,7 +38,7 @@ namespace CourseProject
                         commandName += symbol;
                     }
 
-                    var commandRemainder = Common.CustomSubstring(command,commandName.Length + 1);
+                    var commandRemainder = Common.CustomSubstring(command, commandName.Length + 1);
                     string funcName = string.Empty;
                     int currentIndex = 0;
 
@@ -86,19 +87,49 @@ namespace CourseProject
                             Console.WriteLine(treeResult);
                             break;
                         case "ALL":
-                            Console.WriteLine("bla bla all");
+                            if (!rootByFuncNames.ContainsKey(commandRemainder) || !parametersByFuncNames.ContainsKey(commandRemainder))
+                            {
+                                throw new Exception($"Функцията {commandRemainder} не е дефинирана");
+                            }
+
+                            var parameters = parametersByFuncNames[commandRemainder];
+
+                            List<List<string>> variations = new List<List<string>>();
+
+                            var workArr = new List<int>();
+                            foreach (var _ in parameters)
+                            {
+                                workArr.Add(0);
+                            }
+
+                            All.GenerateVariationsWithRep(variations, workArr, 2, parameters.Count, 0);
+
+                            foreach (var variation in variations)
+                            {
+                                Solve.ReplaceParametersWithValues(rootByFuncNames[commandRemainder],
+                                    parameters,
+                                    variation,
+                                    solvedFunctions,
+                                    rootByFuncNames);
+
+                                bool variationResult = Solve.SolveNode(rootByFuncNames[commandRemainder]);
+
+                                string argumentsKey = All.ConvertToArgumentsKey(commandRemainder, variation);
+                                solvedFunctions.Add(argumentsKey, variationResult);
+                                WriteSolutions(argumentsKey, variationResult);
+                            }
                             break;
                         default:
                             Console.WriteLine("Командата не е разпозната. Въведете валидна команда!");
                             break;
                     }
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     Console.WriteLine($"{ex.Message}");
                 }
             }
-            
+
         }
 
         private static void WriteDefinitions(string funcName, string funcBody)
@@ -139,7 +170,7 @@ namespace CourseProject
                 {
                     if (line[i] is ':')
                     {
-                        solvedFunctions.Add(key, Boolean.Parse(Common.CustomSubstring(line,i + 1)));
+                        solvedFunctions.Add(key, Boolean.Parse(Common.CustomSubstring(line, i + 1)));
                         break;
                     }
 
@@ -164,7 +195,7 @@ namespace CourseProject
                 {
                     if (line[i] is ':')
                     {
-                        string funcBody = Common.CustomSubstring(line,i + 1);
+                        string funcBody = Common.CustomSubstring(line, i + 1);
                         Tree tree = new Tree();
                         TreeNode root = tree.BuildTree(funcBody);
                         rootByFuncNames.Add(key, root);
