@@ -54,6 +54,27 @@ namespace LogicalSolver.Common
             return (parametersList, currentIndex);
         }
 
+
+        public static string CustomSubstring(string wholeStr, int start, int length = int.MaxValue)
+        {
+            string substring = string.Empty;
+
+            if (wholeStr.Length + start > length)
+            {
+                length = start + length;
+            }
+            else
+            {
+                length = wholeStr.Length;
+            }
+
+            for (int i = start; i < length; i++)
+            {
+                substring += wholeStr[i];
+            }
+
+            return substring;
+        }
     }
 
 }

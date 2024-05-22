@@ -22,7 +22,6 @@ namespace CourseProject
             {
                 try
                 {
-
                     Console.WriteLine("Въведете команда:");
                     string command = Console.ReadLine();
 
@@ -38,7 +37,7 @@ namespace CourseProject
                         commandName += symbol;
                     }
 
-                    var commandRemainder = command.Substring((commandName.Length + 1));
+                    var commandRemainder = Common.CustomSubstring(command,commandName.Length + 1);
                     string funcName = string.Empty;
                     int currentIndex = 0;
 
@@ -140,7 +139,7 @@ namespace CourseProject
                 {
                     if (line[i] is ':')
                     {
-                        solvedFunctions.Add(key, Boolean.Parse(line.Substring(i + 1)));
+                        solvedFunctions.Add(key, Boolean.Parse(Common.CustomSubstring(line,i + 1)));
                         break;
                     }
 
@@ -165,7 +164,7 @@ namespace CourseProject
                 {
                     if (line[i] is ':')
                     {
-                        string funcBody = line.Substring(i + 1);
+                        string funcBody = Common.CustomSubstring(line,i + 1);
                         Tree tree = new Tree();
                         TreeNode root = tree.BuildTree(funcBody);
                         rootByFuncNames.Add(key, root);
