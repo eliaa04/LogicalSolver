@@ -2,6 +2,7 @@
 using LogicalSolver.Common;
 using LogicalSolver.Define;
 using LogicalSolver.Solve;
+using System.Linq.Expressions;
 using System.Text;
 
 namespace CourseProject
@@ -19,77 +20,86 @@ namespace CourseProject
 
             while (true)
             {
-                Console.WriteLine("Въведете команда:");
-                string command = Console.ReadLine();
-
-                string commandName = string.Empty;
-
-                foreach (var symbol in command)
+                try
                 {
-                    if (Char.IsWhiteSpace(symbol))
+
+                    Console.WriteLine("Въведете команда:");
+                    string command = Console.ReadLine();
+
+                    string commandName = string.Empty;
+
+                    foreach (var symbol in command)
                     {
-                        break;
-                    }
-
-                    commandName += symbol;
-                }
-
-                var commandRemainder = command.Substring((commandName.Length + 1));
-                string funcName = string.Empty;
-                int currentIndex = 0;
-
-                switch (commandName.ToUpperInvariant())
-                {
-                    case "DEFINE":
-                        (funcName, currentIndex) = Common.ParseFuncName(commandRemainder);
-                        (List<string> parametersList, currentIndex) = Common.ParseParameters(commandRemainder, currentIndex);
-                        string funcBody = Define.Parse(commandRemainder, currentIndex);
-                        Tree tree = new Tree();
-                        TreeNode root = tree.BuildTree(funcBody);
-                        Define.ValidateDefinitionCandidate(root,parametersList,rootByFuncNames);
-                        rootByFuncNames.Add(funcName, root);
-                        parametersByFuncNames.Add(funcName, parametersList);
-                        WriteDefinitions(funcName, funcBody);
-                        WriteParameters(funcName, parametersList);
-                        break;
-                    case "SOLVE":
-                        if (solvedFunctions.ContainsKey(commandRemainder))
+                        if (Char.IsWhiteSpace(symbol))
                         {
-                            Console.WriteLine(solvedFunctions[commandRemainder]);
                             break;
                         }
-                        (funcName, currentIndex) = Common.ParseFuncName(commandRemainder);
-                        (List<string> argumentsList, currentIndex) = Common.ParseParameters(commandRemainder, currentIndex);
 
-                        TreeNode rootForSolving = null;
+                        commandName += symbol;
+                    }
 
-                        if (rootByFuncNames.ContainsKey(funcName))
-                        {
-                            rootForSolving = rootByFuncNames[funcName];
-                        }
+                    var commandRemainder = command.Substring((commandName.Length + 1));
+                    string funcName = string.Empty;
+                    int currentIndex = 0;
 
-                        List<string> parametersForSolving = new();
-                        if (parametersByFuncNames.ContainsKey(funcName))
-                        {
-                            parametersForSolving = parametersByFuncNames[funcName];
-                        }
+                    switch (commandName.ToUpperInvariant())
+                    {
+                        case "DEFINE":
+                            (funcName, currentIndex) = Common.ParseFuncName(commandRemainder);
+                            (List<string> parametersList, currentIndex) = Common.ParseParameters(commandRemainder, currentIndex);
+                            string funcBody = Define.Parse(commandRemainder, currentIndex);
+                            Tree tree = new Tree();
+                            TreeNode root = tree.BuildTree(funcBody);
+                            Define.ValidateDefinitionCandidate(root, parametersList, rootByFuncNames);
+                            rootByFuncNames.Add(funcName, root);
+                            parametersByFuncNames.Add(funcName, parametersList);
+                            WriteDefinitions(funcName, funcBody);
+                            WriteParameters(funcName, parametersList);
+                            break;
+                        case "SOLVE":
+                            if (solvedFunctions.ContainsKey(commandRemainder))
+                            {
+                                Console.WriteLine(solvedFunctions[commandRemainder]);
+                                break;
+                            }
+                            (funcName, currentIndex) = Common.ParseFuncName(commandRemainder);
+                            (List<string> argumentsList, currentIndex) = Common.ParseParameters(commandRemainder, currentIndex);
 
-                        Solve.ReplaceParametersWithValues(rootForSolving, parametersForSolving, argumentsList,solvedFunctions, 
-                            rootByFuncNames);
-                        bool treeResult = Solve.SolveNode(rootForSolving);
-                        solvedFunctions.Add(commandRemainder, treeResult);
-                        WriteSolutions(commandRemainder, treeResult);
+                            TreeNode rootForSolving = null;
 
-                        Console.WriteLine(treeResult);
-                        break;
-                    case "ALL":
-                        Console.WriteLine("bla bla all");
-                        break;
-                    default:
-                        Console.WriteLine("Командата не е разпозната. Въведете валидна команда!");
-                        break;
+                            if (rootByFuncNames.ContainsKey(funcName))
+                            {
+                                rootForSolving = rootByFuncNames[funcName];
+                            }
+
+                            List<string> parametersForSolving = new();
+                            if (parametersByFuncNames.ContainsKey(funcName))
+                            {
+                                parametersForSolving = parametersByFuncNames[funcName];
+                            }
+
+                            Solve.ReplaceParametersWithValues(rootForSolving, parametersForSolving, argumentsList, solvedFunctions,
+                                rootByFuncNames);
+                            bool treeResult = Solve.SolveNode(rootForSolving);
+                            solvedFunctions.Add(commandRemainder, treeResult);
+                            WriteSolutions(commandRemainder, treeResult);
+
+                            Console.WriteLine(treeResult);
+                            break;
+                        case "ALL":
+                            Console.WriteLine("bla bla all");
+                            break;
+                        default:
+                            Console.WriteLine("Командата не е разпозната. Въведете валидна команда!");
+                            break;
+                    }
+                }
+                catch(Exception ex)
+                {
+                    Console.WriteLine($"{ex.Message}");
                 }
             }
+            
         }
 
         private static void WriteDefinitions(string funcName, string funcBody)
