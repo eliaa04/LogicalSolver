@@ -1,14 +1,8 @@
-﻿ using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace LogicalSolver
+﻿namespace LogicalSolver
 {
     public class Tree
     {
-        private Stack<TreeNode> _stack = new Stack<TreeNode>();
+        private CustomStack _stack = new CustomStack();
 
         public TreeNode BuildTree(string funcBody)
         {
