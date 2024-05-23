@@ -21,7 +21,7 @@
         }
 
         public static void ValidateDefinitionCandidate(TreeNode root, List<string> parameters,
-            Dictionary<string, TreeNode> rootByFuncNames)
+            CustomDictionary<TreeNode> rootByFuncNames)
         {
             if (root is null)
             {

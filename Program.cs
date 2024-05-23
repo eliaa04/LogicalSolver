@@ -13,9 +13,9 @@ namespace CourseProject
         {
             Console.OutputEncoding = Encoding.UTF8;
 
-            Dictionary<string, TreeNode> rootByFuncNames = ReadDefinitions();
-            Dictionary<string, List<string>> parametersByFuncNames = ReadParameters();
-            Dictionary<string, bool> solvedFunctions = ReadSolutions();
+            CustomDictionary<TreeNode> rootByFuncNames = ReadDefinitions();
+            CustomDictionary<List<string>> parametersByFuncNames = ReadParameters();
+            CustomDictionary<bool> solvedFunctions = ReadSolutions();
 
 
             while (true)
@@ -58,7 +58,7 @@ namespace CourseProject
                         case "SOLVE":
                             if (solvedFunctions.ContainsKey(commandRemainder))
                             {
-                                Console.WriteLine(solvedFunctions[commandRemainder]);
+                                Console.WriteLine(solvedFunctions.Get(commandRemainder));
                                 break;
                             }
 
@@ -69,13 +69,13 @@ namespace CourseProject
 
                             if (rootByFuncNames.ContainsKey(funcName))
                             {
-                                rootForSolving = rootByFuncNames[funcName];
+                                rootForSolving = rootByFuncNames.Get(funcName);
                             }
 
                             List<string> parametersForSolving = new();
                             if (parametersByFuncNames.ContainsKey(funcName))
                             {
-                                parametersForSolving = parametersByFuncNames[funcName];
+                                parametersForSolving = parametersByFuncNames.Get(funcName);
                             }
 
                             Solve.ReplaceParametersWithValues(rootForSolving, parametersForSolving, argumentsList, solvedFunctions,
@@ -92,7 +92,7 @@ namespace CourseProject
                                 throw new Exception($"Функцията {commandRemainder} не е дефинирана");
                             }
 
-                            var parameters = parametersByFuncNames[commandRemainder];
+                            var parameters = parametersByFuncNames.Get(commandRemainder);
 
                             List<List<string>> variations = new List<List<string>>();
 
@@ -119,13 +119,13 @@ namespace CourseProject
 
                             foreach (var variation in variations)
                             {
-                                Solve.ReplaceParametersWithValues(rootByFuncNames[commandRemainder],
+                                Solve.ReplaceParametersWithValues(rootByFuncNames.Get(commandRemainder),
                                     parameters,
                                     variation,
                                     solvedFunctions,
                                     rootByFuncNames);
 
-                                bool variationResult = Solve.SolveNode(rootByFuncNames[commandRemainder]);
+                                bool variationResult = Solve.SolveNode(rootByFuncNames.Get(commandRemainder));
 
                                 string variationStr = string.Empty;
                                 for (int i = 0; i < variation.Count; i++)
@@ -183,9 +183,9 @@ namespace CourseProject
 
             File.AppendAllLines(@"..\..\..\Files\parameters.txt", new[] { $"{funcName}:{parametersString}" });
         }
-        private static Dictionary<string, bool> ReadSolutions()
+        private static CustomDictionary<bool> ReadSolutions()
         {
-            Dictionary<string, bool> solvedFunctions = new();
+            CustomDictionary<bool> solvedFunctions = new();
 
             string[] solutionsFromFile = File.ReadAllLines(@"..\..\..\Files\solutions.txt");
 
@@ -208,9 +208,9 @@ namespace CourseProject
             return solvedFunctions;
         }
 
-        private static Dictionary<string, TreeNode> ReadDefinitions()
+        private static CustomDictionary<TreeNode> ReadDefinitions()
         {
-            Dictionary<string, TreeNode> rootByFuncNames = new();
+            CustomDictionary<TreeNode> rootByFuncNames = new();
 
             string[] definitionsFromFile = File.ReadAllLines(@"..\..\..\Files\definitions.txt");
 
@@ -236,9 +236,9 @@ namespace CourseProject
             return rootByFuncNames;
         }
 
-        private static Dictionary<string, List<string>> ReadParameters()
+        private static CustomDictionary<List<string>> ReadParameters()
         {
-            Dictionary<string, List<string>> parametersByFuncNames = new();
+            CustomDictionary<List<string>> parametersByFuncNames = new();
             string[] parametersFromFile = File.ReadAllLines(@"..\..\..\Files\parameters.txt");
 
             foreach (string line in parametersFromFile)

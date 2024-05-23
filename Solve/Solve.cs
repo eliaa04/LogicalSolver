@@ -6,7 +6,7 @@
     public class Solve
     {
         public static void ReplaceParametersWithValues(TreeNode root, List<string> parameters, List<string> values,
-            Dictionary<string, bool> solvedFunctions, Dictionary<string, TreeNode> rootsByFuncNames)
+            CustomDictionary<bool> solvedFunctions, CustomDictionary<TreeNode> rootsByFuncNames)
 
         {
             if (root is null)
@@ -36,14 +36,14 @@
                     string funcNameWithArguments = ConvertToArgumentsKey(root.ParameterName, parameters, values);
                     if (solvedFunctions.ContainsKey(funcNameWithArguments))
                     {
-                        root.Value = solvedFunctions[funcNameWithArguments];
+                        root.Value = solvedFunctions.Get(funcNameWithArguments);
                     }
                     else
                     {
-                        ReplaceParametersWithValues(rootsByFuncNames[funcName], parameters, values, solvedFunctions,
+                        ReplaceParametersWithValues(rootsByFuncNames.Get(funcName), parameters, values, solvedFunctions,
                            rootsByFuncNames);
 
-                        bool nestedResult = Solve.SolveNode(rootsByFuncNames[funcName]);
+                        bool nestedResult = Solve.SolveNode(rootsByFuncNames.Get(funcName));
                         solvedFunctions.Add(funcNameWithArguments,nestedResult);
                         Program.WriteSolutions(funcNameWithArguments, nestedResult);
 
