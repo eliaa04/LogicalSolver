@@ -3,7 +3,6 @@ using LogicalSolver.All;
 using LogicalSolver.Common;
 using LogicalSolver.Define;
 using LogicalSolver.Solve;
-using System.Linq.Expressions;
 using System.Text;
 
 namespace CourseProject
@@ -62,6 +61,7 @@ namespace CourseProject
                                 Console.WriteLine(solvedFunctions[commandRemainder]);
                                 break;
                             }
+
                             (funcName, currentIndex) = Common.ParseFuncName(commandRemainder);
                             (List<string> argumentsList, currentIndex) = Common.ParseParameters(commandRemainder, currentIndex);
 
@@ -104,6 +104,19 @@ namespace CourseProject
 
                             All.GenerateVariationsWithRep(variations, workArr, 2, parameters.Count, 0);
 
+                            string parameterStr = string.Empty;
+                            for (int i = 0; i < parameters.Count; i++)
+                            {
+                                parameterStr += ($"{parameters[i]}");
+
+                                if (i != parameters.Count - 1)
+                                {
+                                    parameterStr += ",";
+                                }
+                            }
+
+                            Console.WriteLine($"{parameterStr}:{commandRemainder}->");
+
                             foreach (var variation in variations)
                             {
                                 Solve.ReplaceParametersWithValues(rootByFuncNames[commandRemainder],
@@ -114,10 +127,24 @@ namespace CourseProject
 
                                 bool variationResult = Solve.SolveNode(rootByFuncNames[commandRemainder]);
 
+                                string variationStr = string.Empty;
+                                for (int i = 0; i < variation.Count; i++)
+                                {
+                                    variationStr += ($"{variation[i]}");
+
+                                    if (i != variation.Count - 1)
+                                    {
+                                        variationStr += ",";
+                                    }
+                                }
+
+                                Console.WriteLine($"{variationStr} :{All.ToNumber(variationResult)}");
+
                                 string argumentsKey = All.ConvertToArgumentsKey(commandRemainder, variation);
                                 solvedFunctions.Add(argumentsKey, variationResult);
                                 WriteSolutions(argumentsKey, variationResult);
                             }
+
                             break;
                         default:
                             Console.WriteLine("Командата не е разпозната. Въведете валидна команда!");

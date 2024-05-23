@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace LogicalSolver.All
+﻿namespace LogicalSolver.All
 {
     public class All
     {
@@ -45,6 +39,21 @@ namespace LogicalSolver.All
 
             funcNameWithArguments += ')';
             return funcNameWithArguments;
+        }
+
+        public static int ToNumber(bool value)
+        {
+            if (value == true)
+            {
+                return 1;
+            }
+
+            if (value == false)
+            {
+                return 0;
+            }
+
+            throw new ArgumentException("Boolean cannot be represented as a number", nameof(value));
         }
     }
 }

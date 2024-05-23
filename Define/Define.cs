@@ -1,16 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-
-namespace LogicalSolver.Define
+﻿namespace LogicalSolver.Define
 {
     using Common;
+
     public class Define
     {
-
         public static string Parse(string command, int currentIndex)
         {
             string funcBody = string.Empty;
