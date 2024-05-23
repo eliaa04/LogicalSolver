@@ -104,16 +104,7 @@ namespace CourseProject
 
                             All.GenerateVariationsWithRep(variations, workArr, 2, parameters.Count, 0);
 
-                            string parameterStr = string.Empty;
-                            for (int i = 0; i < parameters.Count; i++)
-                            {
-                                parameterStr += ($"{parameters[i]}");
-
-                                if (i != parameters.Count - 1)
-                                {
-                                    parameterStr += ",";
-                                }
-                            }
+                            string parameterStr = Common.ListToString(string.Empty, parameters);
 
                             Console.WriteLine($"{parameterStr}:{commandRemainder}->");
 
@@ -127,17 +118,8 @@ namespace CourseProject
 
                                 bool variationResult = Solve.SolveNode(rootByFuncNames.Get(commandRemainder));
 
-                                string variationStr = string.Empty;
-                                for (int i = 0; i < variation.Count; i++)
-                                {
-                                    variationStr += ($"{variation[i]}");
-
-                                    if (i != variation.Count - 1)
-                                    {
-                                        variationStr += ",";
-                                    }
-                                }
-
+                                string variationStr = Common.ListToString(string.Empty, variation);
+                               
                                 Console.WriteLine($"{variationStr} :{All.ToNumber(variationResult)}");
 
                                 string argumentsKey = All.ConvertToArgumentsKey(commandRemainder, variation);
@@ -171,16 +153,7 @@ namespace CourseProject
 
         private static void WriteParameters(string funcName, List<string> parametersList)
         {
-            string parametersString = string.Empty;
-            for (int i = 0; i < parametersList.Count; i++)
-            {
-                parametersString += parametersList[i];
-                if (i != parametersList.Count - 1)
-                {
-                    parametersString += ",";
-                }
-            }
-
+            string parametersString = Common.ListToString(string.Empty, parametersList);
             File.AppendAllLines(@"..\..\..\Files\parameters.txt", new[] { $"{funcName}:{parametersString}" });
         }
         private static CustomDictionary<bool> ReadSolutions()

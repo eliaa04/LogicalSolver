@@ -1,5 +1,6 @@
 ﻿namespace LogicalSolver.All
 {
+    using Common;
     public class All
     {
         public static void GenerateVariationsWithRep(List<List<string>> variations,List<int> workArr,int n,int k,int index = 0)
@@ -27,15 +28,7 @@
         public static string ConvertToArgumentsKey(string funcName, List<string> arguments)
         {
             string funcNameWithArguments = $"{funcName}(";
-
-            for (int i = 0; i < arguments.Count; i++)
-            {
-                funcNameWithArguments += ($"{arguments[i]}");
-                if (i != arguments.Count - 1)
-                {
-                    funcNameWithArguments += ",";
-                }
-            }
+            funcNameWithArguments = Common.ListToString(funcNameWithArguments,arguments);
 
             funcNameWithArguments += ')';
             return funcNameWithArguments;

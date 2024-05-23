@@ -71,6 +71,20 @@
         }
 
        
+        public static string ListToString(string result, List<string> list)
+        {
+            for (int i = 0; i < list.Count; i++)
+            {
+                result += ($"{list[i]}");
+
+                if (i != list.Count - 1)
+                {
+                    result += ",";
+                }
+            }
+            return result;
+
+        }
     }
 
 }
