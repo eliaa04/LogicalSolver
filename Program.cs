@@ -49,7 +49,7 @@ namespace CourseProject
                             string funcBody = Define.Parse(commandRemainder, currentIndex);
                             Tree tree = new Tree();
                             TreeNode root = tree.BuildTree(funcBody);
-                            Define.ValidateDefinitionCandidate(root, parametersList, rootByFuncNames);
+                            Define.ValidateDefinitionCandidate(root, parametersList, rootByFuncNames, parametersByFuncNames);
                             rootByFuncNames.Add(funcName, root);
                             parametersByFuncNames.Add(funcName, parametersList);
                             WriteDefinitions(funcName, funcBody);
@@ -71,7 +71,11 @@ namespace CourseProject
                             {
                                 rootForSolving = rootByFuncNames.Get(funcName);
                             }
-
+                            else
+                            {
+                                throw new Exception($"Функцията {funcName} не е дефинирана");
+                            }
+                            
                             List<string> parametersForSolving = new();
                             if (parametersByFuncNames.ContainsKey(funcName))
                             {

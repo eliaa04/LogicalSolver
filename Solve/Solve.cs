@@ -20,7 +20,7 @@
                 {
                     if (parameters[i] == root.ParameterName)
                     {
-                        root.Value = ToBoolean(values[i]);
+                        root.Value = ToBoolean(values[i]); 
                         break;
                     }
                 }
